@@ -1,6 +1,8 @@
 # image_tags_geo
 
-image_tags_geo
+This app demonstrates the BLoC pattern
+
+![](gif-2020.gif)
 
 ## Getting Started
 
