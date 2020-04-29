@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:image_tags_geo/models/image_tags_geo_model.dart';
 import 'package:image_tags_geo/service/image_tags_geo_service.dart';
@@ -32,11 +31,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       if (Validators.isValid(event.imageTagsGeoModel.latitude) &&
           Validators.isValid(event.imageTagsGeoModel.longitude)) {
         isValidGps = true;
+      } else {
+        isValidGps = false;
       }
       if (Validators.isValid(event.imageTagsGeoModel.image)) {
         event.imageTagsGeoModel.imag64 =
             base64Encode((event.imageTagsGeoModel.image)?.readAsBytesSync());
         isValidImage = true;
+      } else {
+        isValidImage = false;
       }
       if (isValidGps && isValidImage) {
         yield PostUpdatingMainState();

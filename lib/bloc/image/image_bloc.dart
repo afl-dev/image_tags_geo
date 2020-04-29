@@ -22,6 +22,9 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   Stream<ImageState> mapEventToState(ImageEvent event) async* {
     if (event is UpdatingImageEvent) {
       yield UpdatingImageState();
+    }
+
+    if (event is UpdatedImageEvent) {
       yield* _updateImage(event);
     }
 
@@ -35,7 +38,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   }
 
   Stream<ImageState> _updateImage(event) async* {
-    if (event is UpdatingImageEvent) {
+    if (event is UpdatedImageEvent) {
       final appDir = await sysPaths.getApplicationDocumentsDirectory();
       try {
         final fileName = path.basename(event.storedImage.path);
@@ -43,7 +46,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
         await imageTagsGeoService.saveShared('imagePath', pathImage);
         storedImage = await event.storedImage.copy(pathImage);
       } catch (error) {
-        throw(error);
+        throw (error);
       }
       yield UpdatedImageState(storedImage: storedImage
           //await event.storedImage.copy(pathImage)

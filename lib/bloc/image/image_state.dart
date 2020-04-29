@@ -8,7 +8,6 @@ abstract class ImageState {
 
 class InitialImageState extends ImageState {}
 
-
 class UpdatingImageState extends ImageState {}
 
 class UpdatedImageState extends ImageState {

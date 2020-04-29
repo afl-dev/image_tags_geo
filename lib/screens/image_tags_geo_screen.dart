@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +20,8 @@ class ImageTagsGeo extends StatefulWidget {
 
 class _ImageTagsGeoState extends State<ImageTagsGeo>
     with WidgetsBindingObserver {
-  final PermissionHandler _permissionHandler = PermissionHandler();
+  //final PermissionHandler _permissionHandler = PermissionHandler();
+
   ImageTagsGeoModel _imageTagsGeoModel = ImageTagsGeoModel();
   GeoBloc _geoBloc;
   ImageBloc _imageBloc;
@@ -39,11 +38,17 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
 
   @override
   initState() {
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _requestPermission();
     _geoBloc = BlocProvider.of<GeoBloc>(context);
     _imageBloc = BlocProvider.of<ImageBloc>(context);
     _tagVolBloc = BlocProvider.of<TagVolBloc>(context);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(ImageTagsGeo oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -56,15 +61,9 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
   }
 
   Future<void> _cleanData() async {
-    _geoBloc.add(
-      CleanDataGpsEvent(),
-    );
+    _geoBloc.add(CleanDataGpsEvent());
     _imageBloc.add(CleanDataImageEvent());
     _tagVolBloc.add(CleanDataTagVolEven());
-    /* Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
-      return ImageTagsGeo();
-    }));*/
   }
 
   Future _setDataPost(context) async {
@@ -126,12 +125,19 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
     );
   }
 
-  Future<void> requestPermission({Function onPermissionDenied}) async {
+  Future<void> _requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.camera,
+    ].request();
+  }
+
+  /*Future<void> requestPermission({Function onPermissionDenied}) async {
     _permissionHandler.requestPermissions([
       if (!gpsGranted) PermissionGroup.location,
       if (!cameraGranted) PermissionGroup.camera
     ]);
-  }
+  }*/
 
   // Future<void> requestCameraPermission({Function onPermissionDenied}) async {
   // var granted = await
@@ -142,12 +148,6 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
     return granted;*/
   //print(granted.toString());
   //}
-
-  @override
-  void didUpdateWidget(ImageTagsGeo oldWidget) {
-    requestPermission();
-    super.didUpdateWidget(oldWidget);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +193,7 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
                 child: Column(
                   children: <Widget>[
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     const Text(
                       'Информация',
@@ -208,7 +208,9 @@ class _ImageTagsGeoState extends State<ImageTagsGeo>
                       margin: EdgeInsets.only(top: 10, bottom: 10),
                       height: deviceHeight * 0.08,
                       width: double.infinity,
-                      child: FlatButton(
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         child: Text(
                           'Отправить',
                           style: TextStyle(fontSize: 18),

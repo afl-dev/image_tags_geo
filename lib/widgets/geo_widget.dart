@@ -27,7 +27,7 @@ class Geo extends StatelessWidget {
     return BlocBuilder<GeoBloc, GeoState>(builder: (context, state) {
       return Container(
         margin: EdgeInsets.only(top: 10, bottom: 10),
-        height: deviceHeight * 0.1,
+        height: deviceHeight * 0.08,
         width: double.infinity,
         child: OutlineButton(
           borderSide: BorderSide(color: Colors.grey[400]),
@@ -47,9 +47,11 @@ class Geo extends StatelessWidget {
                 )
               : (state is DataGpsUpdating)
                   ? CircularProgressIndicator()
-                  : Container(
-                      alignment: Alignment.centerRight,
-                      child: Icon(Icons.place)),
+                  : (state is DataGpsUpdatingError)
+                      ? const Text('error')
+                      : Container(
+                          alignment: Alignment.centerRight,
+                          child: Icon(Icons.place)),
         ),
       );
     });

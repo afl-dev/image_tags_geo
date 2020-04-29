@@ -26,3 +26,9 @@ class DataGpsUpdated extends GeoState {
 
   DataGpsUpdated({this.latitude, this.longitude});
 }
+
+class DataGpsUpdatingError extends GeoState {
+  final String error;
+
+  DataGpsUpdatingError({this.error});
+}

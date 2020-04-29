@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,13 +34,12 @@ class _ImageInputState extends State<ImageInput> {
         source: ImageSource.camera,
         //maxWidth: 1200,
         imageQuality: 50);
-    if (imageFile == null) {
+    if (imageFile != null) {
+      _imageBloc.add(UpdatedImageEvent(storedImage: imageFile));
+    } else {
       _imageBloc.add(InitialImageEvent());
       return;
     }
-    _imageBloc.add(
-      UpdatingImageEvent(storedImage: imageFile),
-    );
   }
 
   @override
@@ -58,27 +55,32 @@ class _ImageInputState extends State<ImageInput> {
             child: Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(top: 10, bottom: 10),
-                height: deviceHeight * 0.3,
+                height: deviceHeight * 0.37,
                 width: deviceWidth * 0.85,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey[400]),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
                 ),
-                child: (state is UpdatedImageState && state.storedImage != null)
-                    ? Image.file(
-                        state.storedImage,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      )
-                    : (state is UpdatingImageState)
-                        ? CircularProgressIndicator()
-                        : Align(
-                            child: Icon(
-                              Icons.photo_camera,
-                              size: 40,
+                child:
+                    (state is UpdatedImageState && state?.storedImage != null)
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              state.storedImage,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
                             ),
-                            alignment: Alignment.center,
-                          )),
+                          )
+                        : (state is UpdatingImageState)
+                            ? CircularProgressIndicator()
+                            : Align(
+                                child: Icon(
+                                  Icons.photo_camera,
+                                  size: 40,
+                                ),
+                                alignment: Alignment.center,
+                              )),
           ),
         ],
       );

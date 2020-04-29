@@ -33,29 +33,31 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
     }
 
     if (event is CleanDataGpsEvent) {
-      final updatedLocation = ImageTagsGeoModel(
-        latitude: null,
-        longitude: null,
-      );
-      yield DataUpdatedState(updatedLocation);
+      yield DataGpsUpdated(
+          latitude: latitude = null, longitude: longitude = null);
     }
   }
 
   Stream<GeoState> _gpsChangedStateSave(event) async* {
     try {
-      location = await imageTagsGeoService.getCurrentUserLocation;
+      location = await imageTagsGeoService.getCurrentUserLocation
+          .timeout(const Duration(seconds: 5));
       latitude = location.latitude.toStringAsFixed(6);
       longitude = location.longitude.toStringAsFixed(6);
+
+      try {
+        await imageTagsGeoService.saveShared('latitude', latitude);
+        await imageTagsGeoService.saveShared('longitude', longitude);
+      } catch (error) {
+        yield DataGpsUpdatingError(error: error.toString());
+        throw (error);
+      }
+      yield DataGpsUpdated(latitude: latitude, longitude: longitude);
     } catch (error) {
-      throw (error);
+      print(error.toString());
+      yield DataGpsUpdatingError(error: error.toString());
+      //throw (error);
     }
-    try {
-      await imageTagsGeoService.saveShared('latitude', latitude);
-      await imageTagsGeoService.saveShared('longitude', longitude);
-    } catch (error) {
-      throw (error);
-    }
-    yield DataGpsUpdated(latitude: latitude, longitude: longitude);
   }
 
 /*  Stream<GeoState> _gpsChangedStateGet(event) async* {
