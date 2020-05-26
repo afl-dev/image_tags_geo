@@ -6,7 +6,6 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as sysPaths;
 
 part 'image_event.dart';
-
 part 'image_state.dart';
 
 class ImageBloc extends Bloc<ImageEvent, ImageState> {
